@@ -11,8 +11,10 @@ Zulfadhli Bin Hairil Anuar 1131123070
 
 Work Distribution : 
 
-Faiz : Research
+Faiz 
 
+     : Research
+     
      : Coding = Client (Main, Download, Upload)
      
      : Fixing Bug     
@@ -20,8 +22,10 @@ Faiz : Research
      : Readme Report
      
      
-Zulfadhli : Research
+Zulfadhli 
 
+          : Research
+          
           : Coding = Client (Create, Delete, Exit)
           
                    = Server
