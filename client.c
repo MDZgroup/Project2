@@ -18,92 +18,6 @@
 #include <ctype.h>          
 #include <sys/types.h>
 
-int main(int argc, char *argv[])	
-{
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-
-    char buffer[256];
-    if (argc < 3) {
-       fprintf(stderr,"usage %s hostname port\n", argv[0]);
-       exit(0);
-    }
-    portno = atoi(argv[2]);
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) 
-        error("Socket cannot be opened");
-    server = gethostbyname(argv[1]);
-    if (server == NULL) {
-        fprintf(stderr,"Host does not exist\n");
-        exit(0);
-    }
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, 
-         (char *)&serv_addr.sin_addr.s_addr,
-         server->h_length);
-    serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
-        error("ERROR connecting");
-  
-    printf("\n\nAccess Granted");
-    printf("\nConnected\n");
-
-    int count = 0;
-    while(count == 0){	
-	int proceed = 0;
-	printf("\n\n1.Download\n");
-        printf("2.Upload\n"); 
-        printf("3.Create\n");
-        printf("4.Delete\n"); 
-        printf("5.Exit\n ");
-	printf("\nPick your command : ");
-	bzero(buffer,256);
-	fgets(buffer,255,stdin);
-    	char input[256];
-	strcpy(input, buffer);
-	
-	int datalen = strlen(buffer);
-	int tmp = htonl(datalen);
-	n = write(sockfd, (char*)&tmp, sizeof(tmp));
-	if(n < 0) error("Cannot write to socket");
-	n = write(sockfd,buffer,datalen);
-	if (n < 0) error("Cannot write to socket");
-	
-
-	if((strcmp(input, "1\n")) == 0){	
-	   download(sockfd);
-	   count = 0;
-	}
-	else if((strcmp(input, "2\n")) == 0){	
-	   upload(sockfd);
-	   count = 0;
-	}
-	else if((strcmp(input, "3\n")) == 0){	
-	   create(sockfd);
-	   count = 0;
-	}
-	else if((strcmp(input, "4\n")) == 0){	
-	   delete(sockfd);
-	   count = 0;
-	}
-	else if((strcmp(input, "5\n")) == 0){	
-	   count = 1;
-	   proceed = 1;
-	}
-	else{
-	   printf("\nInput error!");	
-	   count = 0;
-	}
-    }
-	
-    close(sockfd);
-    printf("\nSigning out");
-    printf("\nDisconnected.\n\n");
-    return 0;
-}
-
 void error(const char *msg){
     perror(msg);
     exit(0);
@@ -396,6 +310,92 @@ void delete(int sockfd){
 		  }
 		}
 	}
+}
+
+int main(int argc, char *argv[])	
+{
+    int sockfd, portno, n;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+
+    char buffer[256];
+    if (argc < 3) {
+       fprintf(stderr,"usage %s hostname port\n", argv[0]);
+       exit(0);
+    }
+    portno = atoi(argv[2]);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) 
+        error("Socket cannot be opened");
+    server = gethostbyname(argv[1]);
+    if (server == NULL) {
+        fprintf(stderr,"Host does not exist\n");
+        exit(0);
+    }
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr, 
+         (char *)&serv_addr.sin_addr.s_addr,
+         server->h_length);
+    serv_addr.sin_port = htons(portno);
+    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
+        error("ERROR connecting");
+  
+    printf("\n\nAccess Granted");
+    printf("\nConnected\n");
+
+    int count = 0;
+    while(count == 0){	
+	int proceed = 0;
+	printf("\n\n1.Download\n");
+        printf("2.Upload\n"); 
+        printf("3.Create\n");
+        printf("4.Delete\n"); 
+        printf("5.Exit\n ");
+	printf("\nPick your command : ");
+	bzero(buffer,256);
+	fgets(buffer,255,stdin);
+    	char input[256];
+	strcpy(input, buffer);
+	
+	int datalen = strlen(buffer);
+	int tmp = htonl(datalen);
+	n = write(sockfd, (char*)&tmp, sizeof(tmp));
+	if(n < 0) error("Cannot write to socket");
+	n = write(sockfd,buffer,datalen);
+	if (n < 0) error("Cannot write to socket");
+	
+
+	if((strcmp(input, "1\n")) == 0){	
+	   download(sockfd);
+	   count = 0;
+	}
+	else if((strcmp(input, "2\n")) == 0){	
+	   upload(sockfd);
+	   count = 0;
+	}
+	else if((strcmp(input, "3\n")) == 0){	
+	   create(sockfd);
+	   count = 0;
+	}
+	else if((strcmp(input, "4\n")) == 0){	
+	   delete(sockfd);
+	   count = 0;
+	}
+	else if((strcmp(input, "5\n")) == 0){	
+	   count = 1;
+	   proceed = 1;
+	}
+	else{
+	   printf("\nInput error!");	
+	   count = 0;
+	}
+    }
+	
+    close(sockfd);
+    printf("\nSigning out");
+    printf("\nDisconnected.\n\n");
+    return 0;
 }
 
 
